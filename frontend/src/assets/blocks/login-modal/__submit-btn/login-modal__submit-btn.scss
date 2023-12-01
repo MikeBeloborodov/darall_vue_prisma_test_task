@@ -1,0 +1,18 @@
+.login-modal__submit-btn {
+  margin-top: 20px;
+  inline-size: 100px;
+  align-self: center;
+  font-size: 18px;
+  background-color: #5e81f4;
+  color: #fff;
+  padding: 5px 0;
+  border-radius: 5px;
+  border: none;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.login-modal__submit-btn:hover {
+  background-color: #8ba7ff;
+  transition: background-color 0.3s ease;
+}

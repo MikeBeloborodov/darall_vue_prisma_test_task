@@ -1,0 +1,11 @@
+@import "./__text/page-not-found__text.scss";
+@import "./__status/page-not-found__status.scss";
+@import "./__link/page-not-found__link.scss";
+
+.page-not-found {
+  block-size: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,0 +1,13 @@
+@import "../../fonts/fonts.scss";
+
+.hero {
+  text-align: center;
+  font-family: "Crimson Pro";
+  font-weight: 300;
+  font-size: 60px;
+  padding: 50px 0 80px 0;
+}
+
+.hero__break {
+  display: block;
+}

@@ -1,0 +1,8 @@
+.login-modal.login-modal_active {
+  z-index: 200;
+  visibility: initial;
+  opacity: 1;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}

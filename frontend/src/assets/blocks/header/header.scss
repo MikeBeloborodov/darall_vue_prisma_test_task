@@ -1,0 +1,8 @@
+@import "./__login-link/header__login-link";
+@import "./__homepage-link/header__homepage-link";
+
+.header {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+}

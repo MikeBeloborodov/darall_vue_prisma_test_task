@@ -1,0 +1,7 @@
+.card__nutrition-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  margin: 20px 0 0 0;
+  grid-row-gap: 10px;
+}
