@@ -1,20 +1,26 @@
 <script lang="ts">
 export default {
   methods: {
-    openModal() {
-      this.$emit("openModal");
+    openLoginModal() {
+      this.$emit("openLoginModal");
+    },
+    openSignupModal() {
+      this.$emit("openSignupModal");
     },
   },
-  props: ["auth"],
+  props: [],
 };
 </script>
 
 <template>
   <header class="header">
     <a href="/" class="header__homepage-link">sweetgreen</a>
-    <button v-if="!auth" @click="openModal" href="" class="header__login-link">
-      Log in
-    </button>
+    <div class="header__buttons-container">
+      <button @click="openSignupModal" class="header__login-link">
+        Sign up
+      </button>
+      <button @click="openLoginModal" class="header__login-link">Log in</button>
+    </div>
   </header>
 </template>
 

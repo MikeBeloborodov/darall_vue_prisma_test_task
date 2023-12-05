@@ -4,12 +4,14 @@ import LoginModal from "../components/LoginModal.vue";
 import Hero from "../components/Hero.vue";
 import CardsContainer from "../components/CardsContainer.vue";
 import Card from "../components/Card.vue";
+import SignUpModal from "../components/SignUpModal.vue";
 import { ref } from "vue";
 
 export default {
   components: {
     Header,
     LoginModal,
+    SignUpModal,
     Hero,
     CardsContainer,
     Card,
@@ -20,19 +22,33 @@ export default {
       .then((data) => (this.cards = data));
   },
   setup() {
-    const showModal = ref(false);
+    const showLoginModal = ref(false);
+    const showSignupModal = ref(false);
     const auth = ref(false);
-    function toggleModal() {
+    function toggleLoginModal() {
       window.scrollTo(0, 0);
-      showModal.value = !showModal.value;
-      showModal.value
+      showLoginModal.value = !showLoginModal.value;
+      showLoginModal.value
         ? (document.body.style.overflow = "hidden")
         : (document.body.style.overflow = "initial");
       localStorage.setItem("auth", "true");
       auth.value = true;
     }
+    function toggleSignupModal() {
+      window.scrollTo(0, 0);
+      showSignupModal.value = !showSignupModal.value;
+      showSignupModal.value
+        ? (document.body.style.overflow = "hidden")
+        : (document.body.style.overflow = "initial");
+    }
 
-    return { showModal, toggleModal, auth };
+    return {
+      showLoginModal,
+      showSignupModal,
+      toggleLoginModal,
+      toggleSignupModal,
+      auth,
+    };
   },
   data() {
     return {
@@ -45,11 +61,19 @@ export default {
 
 <template>
   <main class="content">
-    <Header :auth="auth" @openModal="toggleModal" />
+    <Header
+      :auth="auth"
+      @openLoginModal="toggleLoginModal"
+      @openSignupModal="toggleSignupModal"
+    />
     <Hero />
     <CardsContainer :title="proteinPlates" :cards="cards" />
   </main>
-  <LoginModal @closeModal="toggleModal" :isActive="showModal" />
+  <LoginModal @closeLoginModal="toggleLoginModal" :isActive="showLoginModal" />
+  <SignUpModal
+    @closeSignupModal="toggleSignupModal"
+    :isActive="showSignupModal"
+  />
 </template>
 
 <style lang="scss">

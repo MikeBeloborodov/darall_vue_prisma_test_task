@@ -1,0 +1,24 @@
+@import "./__form/auth-modal__form";
+@import "./__close-btn/auth-modal__close-btn";
+@import "./__label/auth-modal__label";
+@import "./__input/auth-modal__input";
+@import "./__input-container/auth-modal__input-container";
+@import "./__submit-btn/auth-modal__submit-btn";
+@import "./_active/auth-modal_active";
+@import "./__error/auth-modal__error.scss";
+
+.auth-modal {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  visibility: hidden;
+  z-index: -100;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}

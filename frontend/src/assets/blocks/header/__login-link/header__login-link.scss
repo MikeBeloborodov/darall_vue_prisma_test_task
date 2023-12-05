@@ -1,11 +1,10 @@
+@import "../../../variables.scss";
+
 .header__login-link {
-  grid-column: 3/4;
-  justify-self: end;
-  align-self: center;
   font-size: 22px;
   background-color: transparent;
   border: none;
   font-family: inherit;
   cursor: pointer;
-  font-family: "Crimson Pro";
+  font-family: $header-font;
 }

@@ -1,50 +1,53 @@
 <script lang="ts">
-import { ref } from "vue";
 import axios from "axios";
+import { ref } from "vue";
 import { sleep } from "../helpers/helpers";
-
 export default {
   props: ["isActive"],
-  emits: ["closeLoginModal"],
+  emits: ["closeSignupModal"],
   methods: {
-    async loginUser() {
+    async signupUser() {
       this.loading = true;
       await sleep(1000);
       axios({
         method: "post",
-        url: "http://localhost:8080/api/v1/user/login",
+        url: "http://localhost:8080/api/v1/user/signup",
         data: {
           email: this.email,
-          password: this.password,
+          password: this.password1,
         },
       })
         .then((res) => {
           console.log(res);
-          this.$emit("closeLoginModal");
+          this.$emit("closeSignupModal");
         })
         .catch((error) => {
           console.log(error);
-          if (error.response.status === 403) {
-            this.emailError = "Wrong email or password";
-          } else {
-            this.emailError = "Something wrong with the database.";
-          }
         })
         .finally(() => {
           this.loading = false;
         });
     },
-    closeLoginModal() {
+    closeSignupModal() {
       this.email = "";
-      this.password = "";
+      this.password1 = "";
+      this.password2 = "";
       this.emailError = "";
-      this.passwordError = "";
+      this.password1Error = "";
+      this.password2Error = "";
+      this.passwordsMatch = false;
       this.emailValid = false;
-      this.passwordValid = false;
-      this.$emit("closeLoginModal");
+      this.password1Valid = false;
+      this.password2Valid = false;
+      this.$emit("closeSignupModal");
     },
     validateInput() {
-      if ((this.emailValid, this.passwordValid)) {
+      if (
+        (this.emailValid,
+        this.password1Valid,
+        this.password2Valid,
+        this.passwordsMatch)
+      ) {
         this.buttonDisabled = false;
       } else {
         this.buttonDisabled = true;
@@ -52,8 +55,8 @@ export default {
     },
     validateEmail(value: string) {
       if (value === "") {
-        this.emailValid = false;
-        this.emailError = "";
+        this.password1Valid = false;
+        this.password1Error = "";
         this.validateInput();
         return;
       } else if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
@@ -67,20 +70,38 @@ export default {
         this.validateInput();
       }
     },
-    validatePassword(value: string) {
+    validatePassword1(value: string) {
       if (value === "") {
-        this.passwordValid = false;
-        this.passwordError = "";
+        this.password1Valid = false;
+        this.password1Error = "";
         this.validateInput();
         return;
       } else if (/[\da-zA-z@\.!#\$%\^\&\*]+$/.test(value)) {
-        this.passwordValid = true;
-        this.passwordError = "";
+        this.password1Valid = true;
+        this.password1Error = "";
         this.validateInput();
         return;
       } else {
-        this.passwordValid = false;
-        this.passwordError = "Please enter a valid password.";
+        this.password1Valid = false;
+        this.password1Error = "Please enter a valid password.";
+        this.validateInput();
+      }
+    },
+    validatePassword2(value: string) {
+      if (value === "") {
+        this.password2Valid = false;
+        this.password2Error = "";
+        this.validateInput();
+        return;
+      } else if (this.password1 === this.password2) {
+        this.password2Error = "";
+        this.password2Valid = true;
+        this.passwordsMatch = true;
+        this.validateInput();
+        return;
+      } else {
+        this.password2Valid = false;
+        this.password2Error = "Passwords do not match.";
         this.validateInput();
       }
     },
@@ -90,9 +111,13 @@ export default {
       this.email = value;
       this.validateEmail(value);
     },
-    password(value) {
-      this.password = value;
-      this.validatePassword(value);
+    password1(value) {
+      this.password1 = value;
+      this.validatePassword1(value);
+    },
+    password2(value) {
+      this.password2 = value;
+      this.validatePassword2(value);
     },
   },
   data() {
@@ -100,9 +125,13 @@ export default {
       email: "",
       emailValid: false,
       emailError: "",
-      password: "",
-      passwordValid: false,
-      passwordError: "",
+      password1: "",
+      password1Valid: false,
+      password1Error: "",
+      password2: "",
+      password2Error: "",
+      password2Valid: false,
+      passwordsMatch: false,
     };
   },
   setup() {
@@ -119,19 +148,20 @@ export default {
   <div
     class="auth-modal"
     :class="{ 'auth-modal_active': isActive }"
-    @click="closeLoginModal"
+    @click="closeSignupModal"
   >
     <form class="auth-modal__form" @submit.prevent v-on:click.stop>
-      <button @click="closeLoginModal" class="auth-modal__close-btn"></button>
+      <button @click="closeSignupModal" class="auth-modal__close-btn"></button>
       <div class="auth-modal__input-container">
         <label for="email" class="auth-modal__label">Email</label>
         <input
-          id="email"
+          id="signup-email"
           name="email"
           type="email"
-          class="auth-modal__input"
           :class="{ 'auth-modal__input_error': emailError }"
+          class="auth-modal__input"
           placeholder="example@email.com"
+          v-on:input="validateInput"
           v-model="email"
         />
         <span class="auth-modal__error">{{ emailError }}</span>
@@ -139,23 +169,37 @@ export default {
       <div class="auth-modal__input-container">
         <label for="password" class="auth-modal__label">Password</label>
         <input
-          id="password"
+          id="signup-password-1"
           name="password"
           type="password"
           class="auth-modal__input"
-          :class="{ 'auth-modal__input_error': passwordError }"
+          :class="{ 'auth-modal__input_error': password1Error }"
           placeholder="************"
-          v-model="password"
+          v-model="password1"
         />
-        <span class="auth-modal__error">{{ passwordError }}</span>
+        <span class="auth-modal__error">{{ password1Error }}</span>
+      </div>
+      <div class="auth-modal__input-container">
+        <label for="password" class="auth-modal__label">Confirm password</label>
+        <input
+          id="signup-password-2"
+          name="password"
+          type="password"
+          class="auth-modal__input"
+          :class="{ 'auth-modal__input_error': password2Error }"
+          placeholder="************"
+          v-model="password2"
+        />
+        <span class="auth-modal__error">{{ password2Error }}</span>
+        <span class="auth-modal__error"></span>
       </div>
       <button
         :class="{ 'auth-modal__submit-btn_disabled': buttonDisabled }"
-        @click="loginUser"
+        @click="signupUser"
         class="auth-modal__submit-btn"
         type="submit"
       >
-        Login
+        Sign up
       </button>
     </form>
   </div>
@@ -164,6 +208,7 @@ export default {
 <style lang="scss">
 @import "../assets/global.scss";
 @import "../assets/blocks/auth-modal/auth-modal.scss";
+@import "../assets/blocks/spinner/spinner.scss";
 .auth-modal__close-btn {
   background-image: url("../assets/svg/close.svg");
 }

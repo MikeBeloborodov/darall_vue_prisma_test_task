@@ -1,8 +1,15 @@
 import express from "express";
+import parser from "body-parser";
+import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const app = express();
+const port = 8080;
+
+const jsonParser = parser.json();
+
+app.use(cors());
 
 app.get("/api/v1/items", async (req, res) => {
   try {
@@ -13,7 +20,48 @@ app.get("/api/v1/items", async (req, res) => {
   }
 });
 
+app.post("/api/v1/user/signup", jsonParser, async (req, res) => {
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email: req.body.email,
+        password: req.body.password,
+      },
+    });
+    return res.status(201).send(user);
+  } catch (error) {
+    return res.status(500).send({ error: "Error with database, call admin." });
+  }
+});
+
+app.post("/api/v1/user/login", jsonParser, async (req, res) => {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email: req.body.email,
+        password: req.body.password,
+      },
+    });
+    if (user) {
+      return res.status(200).send({ token: "token" });
+    } else {
+      return res
+        .status(403)
+        .send({
+          message: "User with these credentials has not been registered.",
+        });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error with database, call admin." });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
 async function main() {
+  /*
   await prisma.user.create({
     data: {
       email: "admin@mail.ru",
@@ -39,14 +87,5 @@ async function main() {
     },
   });
   console.dir(allUsers, { depth: null });
+    * */
 }
-
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.log(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
